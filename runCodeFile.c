@@ -3,7 +3,9 @@
 
 int *alocaVetor(int tam);
 void leVetor(FILE *file, int *vet, int tam);
-
+int mergeCount(int *vet1, int *temp, int esquerda, int pivo, int direita);
+int mergeSort(int *vet, int *temp, int esquerda, int direita);
+int inversionCount(int *indices, int tam);
 int main() {
     int tam1, tam2;
     int numComuns = 0;
