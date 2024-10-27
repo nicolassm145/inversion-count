@@ -14,7 +14,6 @@ int main() {
     int *lista1, *lista2, *indices;
     int numComuns, inversoes;
 
-
     scanf("%d", &n1);
     lista1 = alocaVetor(n1);
     if (lista1 == NULL) {
@@ -37,12 +36,13 @@ int main() {
         return 1;
     }
 
-
     numComuns = encontraComuns(lista1, lista2, n1, n2, indices);
-    inversoes = (numComuns > 0) ? contaInversoes(indices, numComuns) : 0;
+    if (numComuns > 0)
+        inversoes = contaInversoes(indices, numComuns);
+    else
+        inversoes = 0;
     printf("%d\n", inversoes);
 
-    // Libera a memória alocada
     free(lista1);
     free(lista2);
     free(indices);
@@ -53,7 +53,7 @@ int main() {
 int* alocaVetor(int tamanho) {
     int *vetor = malloc(tamanho * sizeof(int));
     if (vetor == NULL) {
-        perror("Erro ao alocar memória");  /
+        perror("Erro ao alocar memória");
     }
     return vetor;
 }
@@ -74,39 +74,31 @@ int mergeCount(int *vetor, int *vetorTemp, int esquerda, int pivo, int direito) 
     // Junta as duas sublistas e conta as inversões
     while (i <= pivo - 1 && j <= direito) {
         if (vetor[i] <= vetor[j]) {
-            vetorTemp[k++] = vetor[i++];  // Elemento já ordenado
+            vetorTemp[k++] = vetor[i++];
         } else {
-            vetorTemp[k++] = vetor[j++];  // Conta a inversão
-            inv_count += (pivo - i);      // Incrementa inversões
+            vetorTemp[k++] = vetor[j++];
+            inv_count += (pivo - i);
         }
     }
-
-    // Copia o restante da sublista esquerda
     while (i <= pivo - 1)
         vetorTemp[k++] = vetor[i++];
-
-    // Copia o restante da sublista direita
     while (j <= direito)
         vetorTemp[k++] = vetor[j++];
-
-    // Copia os elementos ordenados de volta para o vetor original
     for (i = esquerda; i <= direito; i++)
         vetor[i] = vetorTemp[i];
 
     return inv_count;
 }
 
-// Função que implementa o merge sort e conta inversões
+// Função do merge sort e conta inversões
 int mergeSortCount(int *vetor, int *vetorTemp, int esquerda, int direito) {
     int pivo, inv_count = 0;
     if (direito > esquerda) {
         pivo = (direito + esquerda) / 2;
-
         // Conta inversões na sublista esquerda
         inv_count += mergeSortCount(vetor, vetorTemp, esquerda, pivo);
         // Conta inversões na sublista direita
         inv_count += mergeSortCount(vetor, vetorTemp, pivo + 1, direito);
-
         // Conta inversões entre as sublistas
         inv_count += mergeCount(vetor, vetorTemp, esquerda, pivo + 1, direito);
     }
@@ -115,14 +107,13 @@ int mergeSortCount(int *vetor, int *vetorTemp, int esquerda, int direito) {
 
 // Função para contar o número de inversões no vetor de índices
 int contaInversoes(int *indices, int n) {
-    int* vetorTemp = (int*)malloc(n * sizeof(int));
+    int* vetorTemp = malloc(n * sizeof(int));
     if (vetorTemp == NULL) {
-        perror("Erro ao alocar memória");  // Exibe erro caso a alocação falhe
+        perror("Erro ao alocar memória");
         exit(1);
     }
-
     int resultado = mergeSortCount(indices, vetorTemp, 0, n - 1);
-    free(vetorTemp);  // Libera memória temporária após uso
+    free(vetorTemp);
     return resultado;
 }
 
@@ -132,10 +123,10 @@ int encontraComuns(int *lista1, int *lista2, int n1, int n2, int indices[]) {
     for (int i = 0; i < n1; i++) {
         for (int j = 0; j < n2; j++) {
             if (lista1[i] == lista2[j]) {
-                indices[numComuns++] = j;  // Armazena o índice do elemento comum
+                indices[numComuns++] = j;  // Armazena o índice
                 break;  // Evita duplicatas
             }
         }
     }
-    return numComuns;  // Retorna o número de elementos comuns encontrados
+    return numComuns;
 }
