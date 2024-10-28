@@ -15,9 +15,9 @@ HashMap *criarHashMap(int tamanho);
 void inserirHashMap(HashMap *map, int chave, int valor);
 int buscarHashMap(HashMap *map, int chave);
 void liberarHashMap(HashMap *map);
-int mergeCount(int *vetor, int *vetorTemp, int esquerda, int pivo, int direito);
-int mergeSortCount(int *vetor, int *vetorTemp, int esquerda, int direito);
-int contaInversoes(int *indices, int n);
+int mergeCount(int *vetor, int *vetorTemp, int esquerda, int pivo, int direita);
+int mergeSortCount(int *vetor, int *vetorTemp, int esquerda, int direita);
+int contaInversoes(int *indices, int numComuns);
 int encontraComuns(int *lista1, int *lista2, int n1, int n2, int *indices);
 
 int main() {
@@ -96,13 +96,13 @@ void liberarHashMap(HashMap *map) {
     free(map);
 }
 // Auxilia na contagem de inversões ao mesclar (merge) dois vetores
-int mergeCount(int *vetor, int *vetorTemp, int esquerda, int pivo, int direito) {
+int mergeCount(int *vetor, int *vetorTemp, int esquerda, int pivo, int direita) {
     int i = esquerda;       // Índice inicial da esquerda
     int j = pivo;           // Índice inicial da direita
     int k = esquerda;       // Índice para o vetorTemp
     int inv_count = 0;
     // Combina os elementos das duas metades em vetorTemp
-    while (i <= pivo - 1 && j <= direito) {
+    while (i <= pivo - 1 && j <= direita) {
         if (vetor[i] <= vetor[j]) {
             vetorTemp[k++] = vetor[i++];
         } else {
@@ -115,24 +115,24 @@ int mergeCount(int *vetor, int *vetorTemp, int esquerda, int pivo, int direito) 
     while (i <= pivo - 1)
         vetorTemp[k++] = vetor[i++];
     // Metade direita
-    while (j <= direito)
+    while (j <= direita)
         vetorTemp[k++] = vetor[j++];
     // VetorTemp para o original.
-    for (i = esquerda; i <= direito; i++)
+    for (i = esquerda; i <= direita; i++)
         vetor[i] = vetorTemp[i];
     return inv_count;
 }
 // Ordena e conta as inversões do vetor.
-int mergeSortCount(int *vetor, int *vetorTemp, int esquerda, int direito) {
+int mergeSortCount(int *vetor, int *vetorTemp, int esquerda, int direita) {
     int pivo, inv_count = 0;
-    if (direito > esquerda) {
-        pivo = (direito + esquerda) / 2;
+    if (direita > esquerda) {
+        pivo = (direita + esquerda) / 2;
         // Conta as inversões na metade esquerda.
         inv_count += mergeSortCount(vetor, vetorTemp, esquerda, pivo);
         // Conta as inversões na metade direita.
-        inv_count += mergeSortCount(vetor, vetorTemp, pivo + 1, direito);
+        inv_count += mergeSortCount(vetor, vetorTemp, pivo + 1, direita);
         // Conta as inversões entre as duas metades.
-        inv_count += mergeCount(vetor, vetorTemp, esquerda, pivo + 1, direito);
+        inv_count += mergeCount(vetor, vetorTemp, esquerda, pivo + 1, direita);
     }
     return inv_count;
 }
